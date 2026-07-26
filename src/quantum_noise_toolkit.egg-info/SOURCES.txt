@@ -8,9 +8,12 @@ src/qntoolkit/metrics/__init__.py
 src/qntoolkit/noise_models/__init__.py
 src/qntoolkit/reports/__init__.py
 src/qntoolkit/utils/__init__.py
+src/qntoolkit/utils/backend_loader.py
+src/qntoolkit/utils/exceptions.py
 src/qntoolkit/visualization/__init__.py
 src/quantum_noise_toolkit.egg-info/PKG-INFO
 src/quantum_noise_toolkit.egg-info/SOURCES.txt
 src/quantum_noise_toolkit.egg-info/dependency_links.txt
 src/quantum_noise_toolkit.egg-info/requires.txt
 src/quantum_noise_toolkit.egg-info/top_level.txt
+tests/test_backend_loader.py
