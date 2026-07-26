@@ -1,5 +1,5 @@
-from qntoolkit.utils import simulator
+from qntoolkit.utils import get_simulator
 
-backend = simulator()
+backend = get_simulator()
 
 print(backend)

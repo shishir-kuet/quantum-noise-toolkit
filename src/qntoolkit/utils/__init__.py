@@ -1,8 +1,11 @@
 from .backend_loader import (
-    load_backend,
+    get_simulator,
+    get_backend,
     list_backends,
-    get_backend_info,
-    backend_status,
-    get_least_busy_backend,
-    simulator,
+    backend_exists,
+)
+
+from .exceptions import (
+    ServiceNotInitializedError,
+    BackendNotFoundError,
 )
