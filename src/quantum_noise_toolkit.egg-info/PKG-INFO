@@ -1,3 +1,55 @@
+Metadata-Version: 2.4
+Name: quantum-noise-toolkit
+Version: 0.1.0
+Summary: An open-source Python toolkit for quantum noise characterization, simulation, analysis, and visualization on NISQ quantum devices.
+Author: Md. Mosaddek Ali
+License: MIT License
+        
+        Copyright (c) 2026 Md. Mosaddek Ali
+        
+        Permission is hereby granted, free of charge, to any person obtaining a copy
+        of this software and associated documentation files (the "Software"), to deal
+        in the Software without restriction, including without limitation the rights
+        to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+        copies of the Software, and to permit persons to whom the Software is
+        furnished to do so, subject to the following conditions:
+        
+        The above copyright notice and this permission notice shall be included in all
+        copies or substantial portions of the Software.
+        
+        THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+        IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+        FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+        AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+        LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+        OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+        SOFTWARE.
+        
+Keywords: quantum,qiskit,noise,nisq,quantum-computing,ibm-quantum
+Classifier: Development Status :: 3 - Alpha
+Classifier: Intended Audience :: Science/Research
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Operating System :: OS Independent
+Classifier: Topic :: Scientific/Engineering
+Classifier: Topic :: Scientific/Engineering :: Physics
+Requires-Python: >=3.11
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: qiskit>=2.4.0
+Requires-Dist: qiskit-aer>=0.17.2
+Requires-Dist: qiskit-ibm-runtime>=0.47.0
+Requires-Dist: qiskit-experiments>=0.14.1
+Requires-Dist: numpy>=2.0
+Requires-Dist: scipy>=1.17
+Requires-Dist: pandas>=3.0
+Requires-Dist: matplotlib>=3.11
+Requires-Dist: plotly>=6.0
+Requires-Dist: rustworkx>=0.17
+Dynamic: license-file
+
 <div align="center">
 
 # Quantum Noise Toolkit
