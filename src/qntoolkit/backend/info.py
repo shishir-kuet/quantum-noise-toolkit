@@ -7,75 +7,99 @@ def get_backend_info(
     service: QiskitRuntimeService,
     backend_name: str,
 ) -> dict:
-    """Return basic information about a backend."""
+    """Return basic backend information."""
 
     backend = get_backend(service, backend_name)
 
     return {
         "name": backend.name,
         "version": backend.backend_version,
-        "description": backend.description,
         "num_qubits": backend.num_qubits,
-        "online_date": backend.online_date,
-        "operations": sorted(backend.operation_names),
+        "operations": list(backend.operation_names),
     }
+
+
+def get_backend_target(
+    service: QiskitRuntimeService,
+    backend_name: str,
+):
+    """Return the backend target."""
+
+    backend = get_backend(service, backend_name)
+
+    return backend.target
+
+
+def get_backend_properties(
+    service: QiskitRuntimeService,
+    backend_name: str,
+):
+    """Return backend properties."""
+
+    backend = get_backend(service, backend_name)
+
+    return backend.properties()
+
+
+def get_backend_configuration(
+    service: QiskitRuntimeService,
+    backend_name: str,
+):
+    """Return backend configuration."""
+
+    backend = get_backend(service, backend_name)
+
+    return backend.configuration()
 
 
 def get_backend_status(
     service: QiskitRuntimeService,
     backend_name: str,
-) -> dict:
+):
     """Return backend status."""
 
     backend = get_backend(service, backend_name)
-    status = backend.status()
 
-    return {
-        "operational": status.operational,
-        "pending_jobs": status.pending_jobs,
-        "status_msg": status.status_msg,
-    }
+    return backend.status()
+
+
+def get_num_qubits(
+    service: QiskitRuntimeService,
+    backend_name: str,
+) -> int:
+    """Return number of physical qubits."""
+
+    backend = get_backend(service, backend_name)
+
+    return backend.num_qubits
+
+
+def get_operation_names(
+    service: QiskitRuntimeService,
+    backend_name: str,
+) -> list[str]:
+    """Return supported operation names."""
+
+    backend = get_backend(service, backend_name)
+
+    return list(backend.operation_names)
+
+
+def get_coupling_map(
+    service: QiskitRuntimeService,
+    backend_name: str,
+):
+    """Return backend coupling map."""
+
+    backend = get_backend(service, backend_name)
+
+    return backend.coupling_map
 
 
 def get_supported_operations(
     service: QiskitRuntimeService,
     backend_name: str,
 ) -> list[str]:
-    """Return supported quantum operations."""
+    """Return supported operations."""
 
-    backend = get_backend(service, backend_name)
-
-    return sorted(backend.operation_names)
-
-
-def get_instruction_durations(
-    service: QiskitRuntimeService,
-    backend_name: str,
-):
-    """Return instruction durations."""
-
-    backend = get_backend(service, backend_name)
-
-    return backend.instruction_durations
-
-
-def get_meas_map(
-    service: QiskitRuntimeService,
-    backend_name: str,
-):
-    """Return backend measurement map."""
-
-    backend = get_backend(service, backend_name)
-
-    return backend.meas_map
-
-
-def get_dt(
-    service: QiskitRuntimeService,
-    backend_name: str,
-):
-    """Return backend dt."""
-
-    backend = get_backend(service, backend_name)
-
-    return backend.dt
+    return get_operation_names(service, backend_name)
