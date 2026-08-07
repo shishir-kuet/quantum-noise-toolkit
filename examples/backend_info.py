@@ -1,7 +1,11 @@
+from pprint import pprint
+
 from qiskit_ibm_runtime import QiskitRuntimeService
+
+from qntoolkit.backend import get_backend_info
 
 service = QiskitRuntimeService()
 
-backend = service.backend("ibm_fez")
+info = get_backend_info(service, "ibm_fez")
 
-print(backend.coupling_map)
+pprint(info)
