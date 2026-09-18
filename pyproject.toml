@@ -54,3 +54,31 @@ package-dir = {"" = "src"}
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "black>=25.0",
+    "ruff>=0.12"
+]
+
+[project.urls]
+Repository = "https://github.com/shishir-kuet/quantum-noise-toolkit"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "ibm: needs IBM Quantum credentials and network access (deselect with -m \"not ibm\")"
+]
+
+[tool.black]
+line-length = 100
+target-version = ["py311"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "PIE", "RUF"]
+ignore = ["RUF001", "RUF002", "RUF003"]  # allow unicode such as µs in labels
