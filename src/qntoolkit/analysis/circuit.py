@@ -5,16 +5,22 @@ The fidelity model multiplies ``(1 - error)`` over every instruction of the
 circuit after it has been mapped onto the backend's physical qubits, using
 the calibrated error of each gate on the exact qubits it acts on. This is the
 standard "estimated success probability" (ESP) model: it assumes errors are
-independent and ignores idle-time decoherence and crosstalk, so it is an
-optimistic but fast and widely used first-order estimate.
+independent and ignores crosstalk, so it is a fast, slightly optimistic
+first-order estimate.
+
+With ``include_idle=True`` the circuit is also scheduled with the device's
+gate durations and decoherence of idling qubits is added (see
+:func:`idle_budget`).
 """
 
 from __future__ import annotations
 
+import math
 from dataclasses import asdict, dataclass, field
 
 from qiskit import QuantumCircuit, transpile
-from qiskit.transpiler import Target
+from qiskit.transpiler import PassManager, Target
+from qiskit.transpiler.passes import ALAPScheduleAnalysis, PadDelay
 
 from qntoolkit.characterization.calibration import backend_name, get_target
 from qntoolkit.utils.exceptions import CalibrationDataError
@@ -135,21 +141,117 @@ def _instruction_error(target: Target, name: str, qargs: tuple[int, ...]) -> flo
     return float(properties.error)
 
 
-def error_budget(circuit: QuantumCircuit, backend) -> dict:
+def idle_error(duration: float, t1: float, t2: float) -> float:
+    """Average gate error of a qubit idling for ``duration`` (same units as T1/T2).
+
+    Uses the average gate fidelity of the combined T1/T2 relaxation channel,
+    ``F = (3 + exp(-t/T1) + 2 exp(-t/T2)) / 6``.
+    """
+
+    if duration <= 0:
+        return 0.0
+
+    t2 = min(t2, 2 * t1)
+    fidelity = (3 + math.exp(-duration / t1) + 2 * math.exp(-duration / t2)) / 6
+
+    return 1.0 - fidelity
+
+
+_TIME_UNITS = {"s": 1.0, "ms": 1e-3, "us": 1e-6, "ns": 1e-9, "ps": 1e-12}
+
+
+def _schedule(circuit: QuantumCircuit, target: Target) -> QuantumCircuit | None:
+    """ALAP-schedule a mapped circuit, making idle periods explicit delays."""
+
+    try:
+        return PassManager([ALAPScheduleAnalysis(target=target), PadDelay(target=target)]).run(
+            circuit
+        )
+    except Exception:
+        # No gate durations to schedule with (e.g. ideal simulators).
+        return None
+
+
+def idle_budget(circuit: QuantumCircuit, backend) -> dict:
+    """Return the fidelity lost to decoherence while qubits sit idle.
+
+    The mapped circuit is scheduled as late as possible with the backend's
+    gate durations. Every idle window that starts after a qubit's first
+    operation and before its measurement is charged :func:`idle_error`
+    with that qubit's T1/T2. Qubits waiting in |0> before their first gate
+    do not decohere and are not charged.
+
+    Returns ``{"fidelity", "count", "duration_ns"}``; the fidelity is 1 when
+    durations or coherence times are unavailable.
+    """
+
+    target = get_target(backend)
+    budget = {"fidelity": 1.0, "count": 0, "duration_ns": 0.0}
+    scheduled = _schedule(circuit, target)
+
+    if scheduled is None or target.qubit_properties is None:
+        return budget
+
+    started: set[int] = set()
+    finished: set[int] = set()
+
+    for instruction in scheduled.data:
+        name = instruction.operation.name
+        qubits = [scheduled.find_bit(qubit).index for qubit in instruction.qubits]
+
+        if name == "barrier":
+            continue
+
+        if name != "delay":
+            if name == "measure":
+                finished.update(qubits)
+            else:
+                started.update(qubits)
+            continue
+
+        qubit = qubits[0]
+        if qubit not in started or qubit in finished:
+            continue
+
+        properties = target.qubit_properties[qubit]
+        t1 = getattr(properties, "t1", None)
+        t2 = getattr(properties, "t2", None)
+        if not t1 or not t2:
+            continue
+
+        operation = instruction.operation
+        if operation.unit == "dt":
+            seconds = operation.duration * (target.dt or 0.0)
+        else:
+            seconds = operation.duration * _TIME_UNITS.get(operation.unit, 0.0)
+
+        budget["fidelity"] *= 1.0 - idle_error(seconds, t1, t2)
+        budget["count"] += 1
+        budget["duration_ns"] += seconds * 1e9
+
+    return budget
+
+
+def error_budget(circuit: QuantumCircuit, backend, include_idle: bool = False) -> dict:
     """Return the fidelity factor and instruction count per error category.
 
     ``circuit`` must already be mapped onto the backend (see
     :func:`prepare_circuit`). Categories are ``single_qubit``,
-    ``two_qubit``, ``multi_qubit`` and ``readout``; each entry holds the
-    product of ``(1 - error)`` over the category and the instruction count.
+    ``two_qubit``, ``multi_qubit``, ``idle`` and ``readout``; each entry
+    holds the product of ``(1 - error)`` over the category and the
+    instruction count. ``idle`` is only evaluated with ``include_idle=True``
+    (see :func:`idle_budget`).
     """
 
     target = get_target(backend)
 
     budget = {
         category: {"fidelity": 1.0, "count": 0}
-        for category in ("single_qubit", "two_qubit", "multi_qubit", "readout")
+        for category in ("single_qubit", "two_qubit", "multi_qubit", "idle", "readout")
     }
+
+    if include_idle:
+        budget["idle"] = idle_budget(circuit, backend)
 
     for instruction in circuit.data:
         name = instruction.operation.name
@@ -180,23 +282,34 @@ def _gate_fidelity(budget: dict) -> float:
         budget["single_qubit"]["fidelity"]
         * budget["two_qubit"]["fidelity"]
         * budget["multi_qubit"]["fidelity"]
+        * budget["idle"]["fidelity"]
     )
 
 
-def estimate_fidelity(circuit: QuantumCircuit, backend, **transpile_options) -> float:
-    """Estimate the fidelity of the circuit's gates (excluding measurement)."""
+def estimate_fidelity(
+    circuit: QuantumCircuit,
+    backend,
+    include_idle: bool = False,
+    **transpile_options,
+) -> float:
+    """Estimate the fidelity of the circuit before measurement."""
 
     mapped = prepare_circuit(circuit, backend, **transpile_options)
 
-    return _gate_fidelity(error_budget(mapped, backend))
+    return _gate_fidelity(error_budget(mapped, backend, include_idle=include_idle))
 
 
-def estimate_success_probability(circuit: QuantumCircuit, backend, **transpile_options) -> float:
+def estimate_success_probability(
+    circuit: QuantumCircuit,
+    backend,
+    include_idle: bool = False,
+    **transpile_options,
+) -> float:
     """Estimate the probability that the circuit runs without any error,
     including readout errors."""
 
     mapped = prepare_circuit(circuit, backend, **transpile_options)
-    budget = error_budget(mapped, backend)
+    budget = error_budget(mapped, backend, include_idle=include_idle)
 
     return _gate_fidelity(budget) * budget["readout"]["fidelity"]
 
@@ -268,12 +381,14 @@ def analyse_circuit(
     transpile_circuit: bool | None = None,
     optimization_level: int = 1,
     seed_transpiler: int | None = None,
+    include_idle: bool = False,
 ) -> CircuitAnalysis:
     """Analyse a circuit against a backend's calibration data.
 
     The circuit is transpiled for the backend (unless it already is), then
     circuit statistics, estimated fidelity, success probability and a
-    0-100 reliability score are computed on the mapped circuit.
+    0-100 reliability score are computed on the mapped circuit. With
+    ``include_idle=True`` idle-qubit decoherence is included.
     """
 
     mapped = prepare_circuit(
@@ -285,7 +400,7 @@ def analyse_circuit(
     )
 
     statistics = circuit_statistics(mapped)
-    budget = error_budget(mapped, backend)
+    budget = error_budget(mapped, backend, include_idle=include_idle)
 
     fidelity = _gate_fidelity(budget)
     success = fidelity * budget["readout"]["fidelity"]

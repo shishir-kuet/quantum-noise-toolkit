@@ -1,0 +1,144 @@
+{
+  "backend": "ibm_fez",
+  "job_id": "dams55o2fm4c73f3f2k0",
+  "shots": 4000,
+  "ran_at": "2026-09-18T23:00:41.472696Z",
+  "results": [
+    {
+      "circuit": "bell",
+      "physical_qubits": [
+        142,
+        143
+      ],
+      "two_qubit_gates": 1,
+      "estimated": 0.9866302413216501,
+      "estimated_with_idle": 0.9865764384918393,
+      "simulated": 0.98824,
+      "hardware": 0.983,
+      "hellinger_sim_vs_hw": 0.9993686268607158,
+      "diagnosis": [],
+      "hardware_counts": {
+        "11": 1946,
+        "00": 1986,
+        "01": 28,
+        "10": 40
+      }
+    },
+    {
+      "circuit": "ghz_3",
+      "physical_qubits": [
+        142,
+        143,
+        144
+      ],
+      "two_qubit_gates": 2,
+      "estimated": 0.9779906784251613,
+      "estimated_with_idle": 0.9775973199666671,
+      "simulated": 0.97934,
+      "hardware": 0.97625,
+      "hellinger_sim_vs_hw": 0.9970637324684095,
+      "diagnosis": [
+        {
+          "clbit": 0,
+          "qubit": 142,
+          "hardware_flip_rate": 0.00975,
+          "simulated_flip_rate": 0.00896
+        },
+        {
+          "clbit": 1,
+          "qubit": 143,
+          "hardware_flip_rate": 0.00675,
+          "simulated_flip_rate": 0.00572
+        },
+        {
+          "clbit": 2,
+          "qubit": 144,
+          "hardware_flip_rate": 0.00725,
+          "simulated_flip_rate": 0.00598
+        }
+      ],
+      "hardware_counts": {
+        "000": 2007,
+        "111": 1898,
+        "110": 31,
+        "001": 8,
+        "101": 25,
+        "100": 12,
+        "011": 17,
+        "010": 2
+      }
+    },
+    {
+      "circuit": "ghz_5",
+      "physical_qubits": [
+        140,
+        141,
+        142,
+        143,
+        144
+      ],
+      "two_qubit_gates": 4,
+      "estimated": 0.9582006513571367,
+      "estimated_with_idle": 0.955217048852239,
+      "simulated": 0.95946,
+      "hardware": 0.929,
+      "hellinger_sim_vs_hw": 0.9875824031313144,
+      "diagnosis": [
+        {
+          "clbit": 0,
+          "qubit": 140,
+          "hardware_flip_rate": 0.033,
+          "simulated_flip_rate": 0.01092
+        },
+        {
+          "clbit": 1,
+          "qubit": 141,
+          "hardware_flip_rate": 0.00675,
+          "simulated_flip_rate": 0.00678
+        },
+        {
+          "clbit": 2,
+          "qubit": 142,
+          "hardware_flip_rate": 0.004,
+          "simulated_flip_rate": 0.00582
+        },
+        {
+          "clbit": 3,
+          "qubit": 143,
+          "hardware_flip_rate": 0.00525,
+          "simulated_flip_rate": 0.00546
+        },
+        {
+          "clbit": 4,
+          "qubit": 144,
+          "hardware_flip_rate": 0.00575,
+          "simulated_flip_rate": 0.00572
+        }
+      ],
+      "hardware_counts": {
+        "11101": 21,
+        "11111": 1793,
+        "00000": 1923,
+        "11110": 94,
+        "00001": 38,
+        "00111": 16,
+        "11100": 11,
+        "11000": 21,
+        "10000": 13,
+        "11011": 13,
+        "01111": 10,
+        "00011": 9,
+        "10111": 18,
+        "00010": 6,
+        "01000": 3,
+        "01110": 3,
+        "00100": 3,
+        "10011": 1,
+        "10110": 1,
+        "00110": 1,
+        "11010": 1,
+        "10001": 1
+      }
+    }
+  ]
+}
