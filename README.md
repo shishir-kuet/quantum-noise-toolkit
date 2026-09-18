@@ -297,7 +297,7 @@ The toolkit is intended to work across multiple operating systems.
 Clone the repository
 
 ```bash
-git clone https://github.com/<username>/quantum-noise-toolkit.git
+git clone https://github.com/shishir-kuet/quantum-noise-toolkit.git
 ```
 
 Navigate into the project directory
@@ -335,6 +335,13 @@ Install the toolkit in editable mode
 pip install -e .
 ```
 
+Run the tests
+
+```bash
+pytest -m "not ibm"   # offline tests (fake backends)
+pytest                # also runs live IBM Quantum tests when credentials are saved
+```
+
 ---
 
 ## Future Installation
@@ -349,13 +356,17 @@ pip install quantum-noise-toolkit
 
 # Quick Start
 
-## Loading an IBM Quantum Backend
+## Loading a Backend
 
 ```python
-from qntoolkit.utils import load_backend
+from qntoolkit import load_backend
 
-backend = load_backend("ibm_brisbane")
+backend = load_backend("ibm_fez")      # real IBM Quantum device (saved credentials)
+backend = load_backend("fake_fez")     # offline snapshot of the same device
+backend = load_backend("aer_simulator")
 ```
+
+Every function in the toolkit accepts any of these backends.
 
 ---
 
@@ -372,17 +383,15 @@ print(summary)
 Expected output
 
 ```
-Backend: ibm_brisbane
-
-Number of Qubits : 127
-
-Average T1        : 189 us
-
-Average T2        : 142 us
-
-Average CX Error  : 0.012
-
-Average Readout Error : 0.021
+Backend               : fake_fez
+Qubits (faulty)       : 156 (0)
+Native 1Q / 2Q Gates  : sx / cz
+Couplers (faulty)     : 176 (7)
+Average T1            : 145.3 us
+Average T2            : 90.5 us
+Average 1Q Error      : 2.87e-04
+Average 2Q Error      : 5.56e-03
+Average Readout Error : 1.32e-02
 ```
 
 ---
@@ -390,7 +399,14 @@ Average Readout Error : 0.021
 ## Analyze a Circuit
 
 ```python
+from qiskit import QuantumCircuit
 from qntoolkit.analysis import analyse_circuit
+
+qc = QuantumCircuit(3, name="ghz")
+qc.h(0)
+qc.cx(0, 1)
+qc.cx(1, 2)
+qc.measure_all()
 
 report = analyse_circuit(
     circuit=qc,
@@ -403,15 +419,18 @@ print(report)
 Expected output
 
 ```
-Depth
-
-CX Count
-
-Estimated Fidelity
-
-Estimated Error
-
-Circuit Reliability
+Circuit              : ghz
+Backend              : fake_fez
+Physical Qubits      : [0, 1, 2]
+Depth                : 12
+Two-Qubit Depth      : 2
+Gate Counts          : {'rz': 10, 'sx': 5, 'measure': 3, 'cz': 2, 'barrier': 1}
+Two-Qubit Gate Count : 2
+Estimated Duration   : 1800 ns
+Estimated Fidelity   : 0.9846
+Estimated Error      : 0.0154
+Success Probability  : 0.9572
+Circuit Reliability  : 95.7/100 (excellent)
 ```
 
 ---
@@ -419,9 +438,10 @@ Circuit Reliability
 ## Generate a Visualization
 
 ```python
-from qntoolkit.visualization import plot_t1_heatmap
+from qntoolkit.visualization import plot_t1_heatmap, plot_calibration_dashboard
 
 plot_t1_heatmap(backend)
+plot_calibration_dashboard(backend, filename="dashboard.png")
 ```
 
 ---
@@ -433,8 +453,19 @@ from qntoolkit.reports import generate_backend_report
 
 generate_backend_report(
     backend,
-    output="backend_report.md"
+    output="backend_report.md"      # or .html, .json, .csv
 )
+```
+
+---
+
+## Run the Examples
+
+```bash
+python examples/bell_state.py
+python examples/ghz_state.py
+python examples/backend_analysis.py            # offline (fake_fez)
+python examples/backend_analysis.py ibm_fez    # live IBM Quantum data
 ```
 
 ---
@@ -443,60 +474,36 @@ generate_backend_report(
 
 ```
 quantum-noise-toolkit/
-
 │
-
 ├── docs/
-│   │
 │   ├── installation.md
 │   ├── architecture.md
 │   ├── api.md
 │   ├── tutorials.md
 │   └── theory.md
 │
-
 ├── examples/
-│   │
 │   ├── bell_state.py
 │   ├── ghz_state.py
-│   ├── qaoa.py
-│   ├── vqe.py
-│   ├── maxcut.py
-│   └── backend_analysis.py
+│   ├── backend_analysis.py
+│   └── backend_*.py / target_api.py   (IBM backend exploration)
 │
-
-├── notebooks/
-│   │
-│   ├── NoiseCharacterization.ipynb
-│   ├── BackendComparison.ipynb
-│   ├── ReadoutError.ipynb
-│   └── Visualization.ipynb
+├── src/qntoolkit/
+│   ├── utils/              backend loading, exceptions
+│   ├── backend/            IBM backend information by name
+│   ├── characterization/   calibration extraction
+│   ├── noise_models/       noise channels, Aer noise models
+│   ├── metrics/            fidelities and distances
+│   ├── analysis/           circuit and backend analysis
+│   ├── visualization/      figures and interactive maps
+│   └── reports/            Markdown / HTML / JSON / CSV reports
 │
-
 ├── tests/
-│
-├── qntoolkit/
-│
-│   ├── characterization/
-│   │
-│   ├── noise_models/
-│   │
-│   ├── metrics/
-│   │
-│   ├── analysis/
-│   │
-│   ├── visualization/
-│   │
-│   ├── reports/
-│   │
-│   └── utils/
-│
 ├── README.md
 ├── CONTRIBUTING.md
 ├── ROADMAP.md
 ├── CHANGELOG.md
 ├── LICENSE
-│
 └── pyproject.toml
 ```
 
@@ -504,7 +511,8 @@ quantum-noise-toolkit/
 
 # API Overview
 
-Quantum Noise Toolkit is organized into several independent modules.
+Quantum Noise Toolkit is organized into several independent modules. The complete reference
+is in [docs/api.md](docs/api.md).
 
 ---
 
@@ -517,23 +525,22 @@ Example
 ```python
 from qntoolkit.characterization import *
 
-backend_summary()
+backend_summary(backend)
 
-qubit_properties()
+qubit_properties(backend)        # DataFrame: T1, T2, readout, 1Q and 2Q errors per qubit
 
-gate_errors()
+gate_errors(backend, "cz")
 
-readout_errors()
+readout_errors(backend)
 ```
 
 Capabilities
 
 - Backend calibration
-- T1 extraction
-- T2 extraction
+- T1 / T2 extraction
 - Readout error
-- Gate error
-- Calibration summaries
+- Gate error and duration
+- Calibration summaries and backend comparison
 
 ---
 
@@ -546,23 +553,30 @@ Example
 ```python
 from qntoolkit.noise_models import *
 
-DepolarizingNoise()
+DepolarizingNoise(0.01)
 
-AmplitudeDamping()
+AmplitudeDamping(0.05).compose(PhaseDamping(0.02))
 
-ThermalRelaxation()
+ThermalRelaxation(t1=100, t2=80, gate_time=0.05)
 
-CustomNoise()
+CustomNoise(kraus_operators)
+
+model = (
+    NoiseModelBuilder()
+    .add(DepolarizingNoise(0.01, num_qubits=2), gates=["cx"])
+    .add_readout(ReadoutNoise(0.02, 0.03))
+    .build()
+)
+
+simulator = noisy_simulator(backend)     # Aer simulator mimicking the device
 ```
 
 Capabilities
 
-- Standard noise channels
-
-- Custom channels
-
+- Standard noise channels: depolarizing, bit flip, phase flip, amplitude damping, phase damping,
+  thermal relaxation, reset, readout
+- Custom channels from Kraus operators
 - Aer integration
-
 - Noise composition
 
 ---
@@ -576,24 +590,28 @@ Example
 ```python
 from qntoolkit.analysis import *
 
-analyse_circuit()
+analyse_circuit(qc, backend)
 
-estimate_fidelity()
+estimate_fidelity(qc, backend)
 
-estimate_success_probability()
+estimate_success_probability(qc, backend)
 
-backend_score()
+backend_score(backend)
+
+best_qubits(backend, 5)
+
+error_hotspots(backend)
+
+backend_suitability(qc, [backend_a, backend_b])
 ```
 
 Capabilities
 
 - Circuit statistics
-
-- Estimated fidelity
-
-- Error accumulation
-
-- Backend suitability
+- Estimated fidelity and error budget
+- Reliability score
+- Qubit ranking and error hotspot detection
+- Backend ranking and suitability
 
 ---
 
@@ -606,15 +624,17 @@ Example
 ```python
 from qntoolkit.metrics import *
 
-state_fidelity()
+state_fidelity(state_a, state_b)
 
-process_fidelity()
+process_fidelity(channel)
 
-gate_fidelity()
+gate_fidelity(channel)
 
-purity()
+purity(state)
 
-trace_distance()
+trace_distance(state_a, state_b)
+
+hellinger_fidelity(counts_a, counts_b)
 ```
 
 ---
@@ -628,15 +648,21 @@ Example
 ```python
 from qntoolkit.visualization import *
 
-plot_t1_heatmap()
+plot_t1_heatmap(backend)
 
-plot_t2_heatmap()
+plot_t2_heatmap(backend)
 
-plot_backend_topology()
+plot_backend_topology(backend)
 
-plot_error_histogram()
+plot_cx_error_map(backend)
 
-plot_gate_errors()
+plot_error_histogram(backend)
+
+plot_gate_errors(backend)
+
+plot_calibration_dashboard(backend)
+
+plot_interactive_topology(backend)       # Plotly, with hover tooltips
 ```
 
 ---
@@ -650,11 +676,11 @@ Example
 ```python
 from qntoolkit.reports import *
 
-generate_backend_report()
+generate_backend_report(backend, output="report.html")
 
-generate_circuit_report()
+generate_circuit_report(qc, backend, output="circuit.md")
 
-generate_noise_summary()
+generate_noise_summary(noise_model)
 ```
 
 Output formats
@@ -771,16 +797,12 @@ Comprehensive documentation is available in the **docs/** directory.
 
 The repository includes practical examples covering
 
-- Bell States
-- GHZ States
-- QAOA
-- VQE
-- MaxCut
-- Quantum Fourier Transform
-- Grover's Algorithm
-- Backend Characterization
-- Calibration Analysis
-- Noise Visualization
+- Bell States (`examples/bell_state.py`)
+- GHZ States (`examples/ghz_state.py`)
+- Backend Characterization, Calibration Analysis and Noise Visualization (`examples/backend_analysis.py`)
+- Step-by-step tutorials in [docs/tutorials.md](docs/tutorials.md)
+
+Planned: QAOA, VQE, MaxCut, Quantum Fourier Transform, Grover's Algorithm and Jupyter notebooks.
 
 These examples are intended for students, educators, and researchers who want hands-on experience with quantum noise analysis.
 
@@ -788,99 +810,17 @@ These examples are intended for students, educators, and researchers who want ha
 
 # Development Roadmap
 
-The project follows an incremental development strategy, where each milestone introduces new capabilities while maintaining a stable and modular architecture.
+The project follows an incremental development strategy, where each milestone introduces new capabilities while maintaining a stable and modular architecture. See [ROADMAP.md](ROADMAP.md) for details.
 
-## Version 0.1 — Foundation
-
-**Status:** 🚧 In Progress
-
-### Objectives
-
-- Project architecture
-- Package structure
-- Backend loader
-- Utility functions
-- Backend property extraction
-- Basic documentation
-- GitHub workflows
-
----
-
-## Version 0.2 — Noise Characterization
-
-### Planned Features
-
-- T₁ analysis
-- T₂ analysis
-- Readout error analysis
-- Gate error extraction
-- Backend calibration parser
-- Backend comparison
-
----
-
-## Version 0.3 — Noise Models
-
-### Planned Features
-
-- Depolarizing Noise
-- Amplitude Damping
-- Phase Damping
-- Thermal Relaxation
-- Readout Error Models
-- Custom Noise Models
-
----
-
-## Version 0.4 — Circuit Analysis
-
-### Planned Features
-
-- Circuit statistics
-- Fidelity estimation
-- Reliability scoring
-- Expected error accumulation
-- Backend suitability analysis
-
----
-
-## Version 0.5 — Visualization
-
-### Planned Features
-
-- Backend topology
-- Heatmaps
-- Calibration dashboards
-- Error histograms
-- Interactive visualizations
-
----
-
-## Version 0.6 — Reporting
-
-### Planned Features
-
-- Backend reports
-- Circuit reports
-- Noise summaries
-- HTML export
-- JSON export
-- CSV export
-
----
-
-## Version 1.0 — Stable Release
-
-### Goals
-
-- Stable API
-- Complete documentation
-- Comprehensive tutorials
-- Unit tests
-- Continuous Integration
-- PyPI package
-- Community contributions
-- Long-term maintenance
+| Version | Milestone | Status |
+|---|---|---|
+| 0.1 | Foundation: architecture, backend loader, backend information | ✅ Done |
+| 0.2 | Noise characterization: T1, T2, readout and gate errors, backend comparison | ✅ Implemented |
+| 0.3 | Noise models: depolarizing, amplitude/phase damping, thermal relaxation, readout, custom | ✅ Implemented |
+| 0.4 | Circuit analysis: statistics, fidelity estimation, reliability scoring, backend suitability | ✅ Implemented |
+| 0.5 | Visualization: topology, heatmaps, dashboards, histograms, interactive maps | ✅ Implemented |
+| 0.6 | Reporting: backend, circuit and noise reports; HTML, JSON, CSV, Markdown export | ✅ Implemented |
+| 1.0 | Stable release: CI, PyPI package, notebooks, more tutorials | 🚧 Planned |
 
 ---
 

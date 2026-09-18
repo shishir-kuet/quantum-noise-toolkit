@@ -1,6 +1,4 @@
-from qiskit_ibm_runtime import QiskitRuntimeService
 
-from .backend_loader import get_backend
 
 
 def get_backend_info(backend) -> dict:

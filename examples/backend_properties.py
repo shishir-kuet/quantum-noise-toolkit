@@ -1,6 +1,7 @@
 from pprint import pprint
-from qiskit_ibm_runtime.ibm_backend import IBMBackend
+
 from qiskit_ibm_runtime import QiskitRuntimeService
+from qiskit_ibm_runtime.ibm_backend import IBMBackend
 
 service = QiskitRuntimeService()
 
