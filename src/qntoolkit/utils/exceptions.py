@@ -7,12 +7,12 @@ class QNToolkitError(Exception):
 
 class BackendNotFoundError(QNToolkitError):
     """Raised when a requested backend cannot be found."""
-    pass
 
 class ServiceNotInitializedError(QNToolkitError):
     """Raised when the runtime service is not initialized."""
-    pass
 
 class BackendConnectionError(QNToolkitError):
     """Raised when a backend connection fails."""
-    pass
+
+class CalibrationDataError(QNToolkitError):
+    """Raised when a backend does not provide the required calibration data."""

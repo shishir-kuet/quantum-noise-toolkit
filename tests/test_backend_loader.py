@@ -1,28 +1,21 @@
-from qntoolkit.utils import get_simulator
-from qntoolkit.utils import get_backend
-from qiskit_aer import AerSimulator
-from qiskit_ibm_runtime import QiskitRuntimeService
-
-from qntoolkit.utils import backend_exists
-
-from qntoolkit.utils import list_backends
-from qntoolkit.utils.exceptions import BackendNotFoundError
 import pytest
+from qiskit_aer import AerSimulator
 
-def test_list_backends():
-    service = QiskitRuntimeService()
+from qntoolkit.utils import (
+    backend_exists,
+    get_backend,
+    get_fake_backend,
+    get_simulator,
+    list_backends,
+    list_fake_backends,
+    load_backend,
+)
+from qntoolkit.utils.exceptions import (
+    BackendNotFoundError,
+    ServiceNotInitializedError,
+)
 
-    backends = list_backends(service)
-
-    assert isinstance(backends, list)
-    assert len(backends) > 0
-    assert "ibm_fez" in backends
-
-
-def test_backend_exists():
-    service = QiskitRuntimeService()
-
-    assert backend_exists(service, "ibm_fez")
+from .conftest import IBM_BACKEND
 
 
 def test_simulator_returns_aer_backend():
@@ -33,16 +26,67 @@ def test_simulator_returns_aer_backend():
     assert backend.name == "aer_simulator"
 
 
-def test_get_backend():
-    service = QiskitRuntimeService()
-
-    backend = get_backend(service, "ibm_fez")
-
-    assert backend.name == "ibm_fez"    
+def test_get_backend_without_service():
+    with pytest.raises(ServiceNotInitializedError):
+        get_backend(None, IBM_BACKEND)
 
 
-def test_get_backend_invalid():
-    service = QiskitRuntimeService()
+def test_list_backends_without_service():
+    with pytest.raises(ServiceNotInitializedError):
+        list_backends(None)
 
+
+def test_fake_backends():
+    names = list_fake_backends()
+
+    assert "fake_manila" in names
+    assert "fake_fez" in names
+
+    backend = get_fake_backend("fake_manila")
+
+    assert backend.name == "fake_manila"
+    assert backend.num_qubits == 5
+
+
+def test_fake_backend_invalid():
     with pytest.raises(BackendNotFoundError):
-        get_backend(service, "ibm_this_backend_does_not_exist")    
+        get_fake_backend("fake_this_backend_does_not_exist")
+
+
+def test_load_backend_offline():
+    assert load_backend("aer_simulator").name == "aer_simulator"
+    assert load_backend("fake_manila").name == "fake_manila"
+
+
+@pytest.mark.ibm
+def test_list_backends(ibm_service):
+    backends = list_backends(ibm_service)
+
+    assert isinstance(backends, list)
+    assert len(backends) > 0
+    assert IBM_BACKEND in backends
+
+
+@pytest.mark.ibm
+def test_backend_exists(ibm_service):
+    assert backend_exists(ibm_service, IBM_BACKEND)
+
+
+@pytest.mark.ibm
+def test_get_backend(ibm_service):
+    backend = get_backend(ibm_service, IBM_BACKEND)
+
+    assert backend.name == IBM_BACKEND
+
+
+@pytest.mark.ibm
+def test_get_backend_invalid(ibm_service):
+    with pytest.raises(BackendNotFoundError):
+        get_backend(ibm_service, "ibm_this_backend_does_not_exist")
+
+
+@pytest.mark.ibm
+def test_load_backend_ibm(ibm_service):
+    backend = load_backend(IBM_BACKEND, service=ibm_service)
+
+    assert backend.name == IBM_BACKEND
