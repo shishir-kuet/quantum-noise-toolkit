@@ -18,6 +18,7 @@ from matplotlib.collections import LineCollection
 from matplotlib.colors import LogNorm, Normalize
 from matplotlib.figure import Figure
 from matplotlib.lines import Line2D
+from matplotlib.ticker import MaxNLocator
 
 from qntoolkit.analysis.backend import rank_qubits
 from qntoolkit.characterization.calibration import (
@@ -368,6 +369,7 @@ def plot_error_histogram(
 
     ax.set_xlabel(label)
     ax.set_ylabel("Count")
+    ax.yaxis.set_major_locator(MaxNLocator(integer=True))
     ax.set_title(f"{backend_name(backend)} - {label} distribution", loc="left", fontsize=12)
 
     return _finish(fig, filename)

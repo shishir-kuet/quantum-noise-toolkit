@@ -101,10 +101,12 @@ Channel arguments accept toolkit channels, Aer errors and any `quantum_info` cha
 
 | Function | Description |
 |---|---|
-| `analyse_circuit(circuit, backend, transpile_circuit=None, optimization_level=1, seed_transpiler=None)` | Returns `CircuitAnalysis` (alias `analyze_circuit`) |
-| `estimate_fidelity(circuit, backend, **options)` | Π(1 − gate error), excluding measurement |
-| `estimate_success_probability(circuit, backend, **options)` | Including readout errors |
-| `error_budget(mapped_circuit, backend)` | Fidelity factor and count per category |
+| `analyse_circuit(circuit, backend, transpile_circuit=None, optimization_level=1, seed_transpiler=None, include_idle=False)` | Returns `CircuitAnalysis` (alias `analyze_circuit`) |
+| `estimate_fidelity(circuit, backend, include_idle=False, **options)` | Π(1 − gate error) (× idle factor), excluding measurement |
+| `estimate_success_probability(circuit, backend, include_idle=False, **options)` | Including readout errors |
+| `error_budget(mapped_circuit, backend, include_idle=False)` | Fidelity factor and count per category (`single_qubit`, `two_qubit`, `multi_qubit`, `idle`, `readout`) |
+| `idle_budget(mapped_circuit, backend)` | ALAP-schedules the circuit and charges T1/T2 decay to idle windows |
+| `idle_error(duration, t1, t2)` | 1 − (3 + e^(−t/T1) + 2e^(−t/T2)) / 6 |
 | `circuit_statistics(circuit)` | Depth, two-qubit depth, gate counts, ... |
 | `prepare_circuit(circuit, backend, ...)` | Transpile unless already mapped |
 
@@ -159,3 +161,16 @@ save.
 The format is inferred from the `output` extension: `.md`, `.html`, `.json`, `.csv`. Each
 generator returns a `Report` with `to_markdown()`, `to_html()`, `to_json()`, `to_csv()`,
 `to_dict()` and `save(path)`.
+
+---
+
+## Command line (`qntoolkit` or `python -m qntoolkit`)
+
+| Command | Description |
+|---|---|
+| `qntoolkit backends [--fake]` | List IBM (or offline fake) backends |
+| `qntoolkit summary BACKEND [--top N]` | Calibration summary, score, best/worst qubits |
+| `qntoolkit hotspots BACKEND [--threshold Z] [--limit N]` | Anomalous qubits and couplers |
+| `qntoolkit analyze CIRCUIT.qasm BACKEND [--idle] [--seed S]` | Circuit reliability estimate (OpenQASM 2 or 3) |
+| `qntoolkit report BACKEND -o report.html` | Backend report (`.md`, `.html`, `.json`, `.csv`) |
+| `qntoolkit dashboard BACKEND -o dashboard.png` | Calibration dashboard image |

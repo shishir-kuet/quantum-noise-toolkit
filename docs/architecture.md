@@ -38,6 +38,7 @@ Dependencies point downward only; a lower layer never imports a higher one.
 | `analysis` | Circuit fidelity estimation, backend scoring, qubit ranking, hotspot detection |
 | `visualization` | Matplotlib figures and Plotly interactive maps |
 | `reports` | A format-independent `Report` model rendered to Markdown, HTML, JSON or CSV |
+| `cli` | The `qntoolkit` command-line interface on top of all modules |
 
 ## Design decisions
 

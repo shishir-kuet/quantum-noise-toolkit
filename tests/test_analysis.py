@@ -17,6 +17,8 @@ from qntoolkit.analysis import (
     error_hotspots,
     estimate_fidelity,
     estimate_success_probability,
+    idle_budget,
+    idle_error,
     rank_backends,
     rank_qubits,
     reliability_label,
@@ -150,3 +152,40 @@ def test_backend_suitability(ghz, manila, fez):
     assert set(table.index) == {"fake_manila", "fake_fez"}
     assert table["success_probability"].is_monotonic_decreasing
     assert not any(math.isnan(value) for value in table["success_probability"])
+
+
+def test_idle_error_matches_thermal_relaxation_channel():
+    from qntoolkit.metrics import gate_error
+    from qntoolkit.noise_models import ThermalRelaxation
+
+    for t1, t2, duration in [(100.0, 80.0, 1.0), (50.0, 90.0, 5.0), (120.0, 30.0, 0.3)]:
+        expected = gate_error(ThermalRelaxation(t1, t2, duration))
+        assert idle_error(duration, t1, t2) == pytest.approx(expected, rel=1e-9)
+
+    assert idle_error(0.0, 100.0, 80.0) == 0.0
+
+
+def test_idle_budget(fez, aer):
+    circuit = QuantumCircuit(5, name="ghz_5")
+    circuit.h(0)
+    for qubit in range(4):
+        circuit.cx(qubit, qubit + 1)
+    circuit.measure_all()
+
+    mapped = transpile(circuit, fez, optimization_level=1, seed_transpiler=3)
+    budget = idle_budget(mapped, fez)
+
+    assert budget["count"] > 0
+    assert budget["duration_ns"] > 0
+    assert 0.99 < budget["fidelity"] < 1.0
+
+    # Ideal simulators have no durations, so nothing is charged.
+    assert idle_budget(transpile(circuit, aer), aer)["fidelity"] == 1.0
+
+    without_idle = analyse_circuit(mapped, fez)
+    with_idle = analyse_circuit(mapped, fez, include_idle=True)
+
+    assert with_idle.error_budget["idle"]["count"] == budget["count"]
+    assert with_idle.success_probability == pytest.approx(
+        without_idle.success_probability * budget["fidelity"]
+    )

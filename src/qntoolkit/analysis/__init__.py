@@ -19,6 +19,8 @@ from .circuit import (
     error_budget,
     estimate_fidelity,
     estimate_success_probability,
+    idle_budget,
+    idle_error,
     prepare_circuit,
     reliability_label,
 )
@@ -37,6 +39,8 @@ __all__ = [
     "error_hotspots",
     "estimate_fidelity",
     "estimate_success_probability",
+    "idle_budget",
+    "idle_error",
     "prepare_circuit",
     "rank_backends",
     "rank_qubits",
