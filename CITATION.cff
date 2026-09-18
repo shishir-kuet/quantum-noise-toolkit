@@ -1,0 +1,16 @@
+cff-version: 1.2.0
+message: "If you use Quantum Noise Toolkit in your research, please cite it as below."
+title: "Quantum Noise Toolkit: characterization, simulation, analysis and visualization of noise on NISQ devices"
+type: software
+authors:
+  - family-names: "Ali"
+    given-names: "Md. Mosaddek"
+version: 0.1.0
+license: MIT
+repository-code: "https://github.com/shishir-kuet/quantum-noise-toolkit"
+keywords:
+  - quantum computing
+  - quantum noise
+  - NISQ
+  - qiskit
+  - noise characterization
