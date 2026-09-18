@@ -33,6 +33,16 @@ ruff check src tests examples
 black src tests examples
 ```
 
+Or install the git hooks once and let them run on every commit:
+
+```bash
+pip install pre-commit
+pre-commit install
+```
+
+CI runs ruff, black and the offline test suite (with coverage) on Python 3.11–3.13 for every
+pull request.
+
 - Type hints on public functions
 - A docstring on every public function and class, stating units where relevant
   (T1/T2 in µs, durations in ns, frequencies in GHz, errors as probabilities)

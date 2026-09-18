@@ -67,9 +67,22 @@ Assuming independent errors, a circuit runs error-free with probability
     ESP = Π_gates (1 − ε_g) · Π_measurements (1 − ε_m)
 
 computed on the physical qubits chosen by the transpiler. This is the model used by
-`analyse_circuit`. It ignores idle-time decoherence, crosstalk and error cancellation, so it is a
-fast, slightly optimistic first-order estimate. It is widely used for layout selection and for
-comparing backends.
+`analyse_circuit`. It ignores crosstalk and error cancellation, so it is a fast, slightly
+optimistic first-order estimate. It is widely used for layout selection and for comparing
+backends.
+
+### Idle decoherence
+
+Gate errors already include decoherence *during* gates, but not while a qubit waits for
+others. With `include_idle=True` the circuit is scheduled as late as possible (ALAP) with the
+device's gate durations. Each idle window of length t, after the qubit's first operation, is
+charged the average gate error of the T1/T2 relaxation channel:
+
+    ε_idle(t) = 1 − (3 + e^(−t/T1) + 2 e^(−t/T2)) / 6
+
+Qubits waiting in \|0⟩ before their first gate are not charged, because the ground state does
+not decay. See [hardware_validation.md](hardware_validation.md) for how much this matters on
+real hardware.
 
 ## Why the toolkit excludes faulty hardware from averages
 

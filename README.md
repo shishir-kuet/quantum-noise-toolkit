@@ -2,385 +2,101 @@
 
 # Quantum Noise Toolkit
 
-### An Open-Source Python Toolkit for Quantum Noise Characterization, Simulation, Analysis, and Visualization on NISQ Quantum Devices
+**Characterize, simulate, analyse and visualize noise on real quantum hardware.**
 
-[![Python](https://img.shields.io/badge/Python-3.11+-blue.svg)](https://www.python.org/)
-[![Qiskit](https://img.shields.io/badge/Qiskit-Latest-6929C4.svg)](https://qiskit.org/)
+[![CI](https://github.com/shishir-kuet/quantum-noise-toolkit/actions/workflows/ci.yml/badge.svg)](https://github.com/shishir-kuet/quantum-noise-toolkit/actions/workflows/ci.yml)
+[![Python](https://img.shields.io/badge/python-3.11%20|%203.12%20|%203.13-blue.svg)](https://www.python.org/)
+[![Qiskit](https://img.shields.io/badge/Qiskit-2.x-6929C4.svg)](https://www.ibm.com/quantum/qiskit)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Contributions Welcome](https://img.shields.io/badge/Contributions-Welcome-brightgreen.svg)](CONTRIBUTING.md)
-[![Status](https://img.shields.io/badge/Status-Under_Development-orange.svg)]()
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-*A community-driven toolkit for understanding, analyzing, and visualizing quantum noise in NISQ-era quantum computers.*
+<img src="docs/images/fez_cz_error_map.png" alt="Two-qubit gate error map of IBM's 156-qubit Heron processor" width="820">
 
----
-
-**Documentation** • **Examples** • **API Reference** • **Roadmap** • **Contributing**
+<sub>CZ gate errors across IBM's 156-qubit <code>ibm_fez</code>. Dashed red couplers are disabled on the device.</sub>
 
 </div>
 
 ---
 
-# Table of Contents
-
-- [Overview](#overview)
-- [Why Quantum Noise Toolkit?](#why-quantum-noise-toolkit)
-- [Goals](#goals)
-- [Features](#features)
-- [Repository Architecture](#repository-architecture)
-
----
-
-# Overview
-
-Quantum computing has entered the **Noisy Intermediate-Scale Quantum (NISQ)** era, where quantum processors contain tens to hundreds of qubits but remain highly susceptible to noise and hardware imperfections. These imperfections limit algorithmic performance and reduce computation fidelity.
-
-Noise sources include:
-
-- Decoherence
-- Thermal relaxation
-- Readout errors
-- Gate imperfections
-- Crosstalk
-- Calibration drift
-- Environmental interactions
-
-Understanding these sources is a prerequisite for designing reliable quantum algorithms and applying techniques such as error mitigation, error suppression, and compiler optimization.
-
-**Quantum Noise Toolkit** is an open-source Python library dedicated to helping researchers, developers, and students characterize, simulate, analyze, and visualize quantum noise on both real quantum hardware and simulators.
-
-Unlike many existing projects, this toolkit focuses on **understanding noise rather than correcting it**, providing reusable building blocks that can support future work in error mitigation, compiler optimization, benchmarking, and quantum hardware analysis.
-
----
-
-# Why Quantum Noise Toolkit?
-
-Although frameworks such as Qiskit provide excellent support for building and executing quantum circuits, there is currently no single modular toolkit focused exclusively on quantum noise analysis.
-
-This project aims to bridge that gap.
-
-The toolkit is designed to provide:
-
-- Hardware calibration analysis
-- Quantum noise characterization
-- Backend comparison
-- Noise model generation
-- Circuit reliability estimation
-- Visualization tools
-- Research-ready APIs
-- Educational examples
-- Reusable modules for future quantum software
-
-Our long-term vision is to establish an extensible ecosystem where researchers can contribute new noise models, analysis techniques, and visualization tools without modifying the core architecture.
-
----
-
-# Goals
-
-The primary objectives of Quantum Noise Toolkit are:
-
-- Characterize noise on quantum hardware
-- Simulate realistic quantum noise models
-- Provide reusable analysis tools
-- Generate publication-quality visualizations
-- Benchmark quantum devices
-- Improve reproducibility in quantum computing research
-- Serve as an educational platform for learning quantum noise
-- Support future repositories focused on error mitigation and compiler optimization
-
----
-
-# Features
-
-## Quantum Hardware Characterization
-
-Extract calibration information from supported quantum backends.
-
-### Supported metrics
-
-- T₁ relaxation times
-- T₂ coherence times
-- Readout error
-- Single-qubit gate errors
-- Two-qubit gate errors
-- Gate durations
-- Qubit frequencies
-- Backend properties
-- Calibration summaries
-
----
-
-## Noise Models
-
-Create and analyze realistic quantum noise models.
-
-Planned support includes:
-
-- Depolarizing Noise
-- Amplitude Damping
-- Phase Damping
-- Phase Flip
-- Bit Flip
-- Thermal Relaxation
-- Readout Error
-- Reset Error
-- Custom Noise Models
-
----
-
-## Circuit Analysis
-
-Estimate how hardware noise affects quantum circuits.
-
-Examples include:
-
-- Circuit depth
-- Gate counts
-- CX counts
-- Estimated error accumulation
-- Expected success probability
-- Circuit reliability score
-- Fidelity estimation
-
----
-
-## Backend Analysis
-
-Analyze and compare quantum hardware.
-
-Examples:
-
-- Best-performing qubits
-- Worst-performing qubits
-- Backend reliability score
-- Average gate fidelity
-- Error hotspot detection
-- Backend ranking
-- Calibration statistics
-
----
-
-## Visualization
-
-Generate publication-quality figures.
-
-Examples include:
-
-- T₁ heatmaps
-- T₂ heatmaps
-- Readout error maps
-- CX error maps
-- Backend topology
-- Calibration dashboards
-- Error histograms
-- Qubit ranking plots
-
----
-
-## Reports
-
-Generate automated reports.
-
-Supported formats:
-
-- Markdown
-- JSON
-- CSV
-- HTML
-
-Future releases will support PDF report generation.
-
----
-
-# Repository Architecture
-
-The project follows a modular architecture to encourage scalability and community contributions.
-
-```
-quantum-noise-toolkit/
-│
-├── docs/
-│
-├── examples/
-│
-├── notebooks/
-│
-├── tests/
-│
-├── qntoolkit/
-│   │
-│   ├── characterization/
-│   │
-│   ├── noise_models/
-│   │
-│   ├── analysis/
-│   │
-│   ├── metrics/
-│   │
-│   ├── visualization/
-│   │
-│   ├── reports/
-│   │
-│   └── utils/
-│
-├── README.md
-├── CONTRIBUTING.md
-├── ROADMAP.md
-├── CHANGELOG.md
-├── CODE_OF_CONDUCT.md
-├── pyproject.toml
-├── requirements.txt
-└── LICENSE
-```
-
-Each module is designed to remain independent while integrating seamlessly with the rest of the toolkit.
-
-This modular architecture allows contributors to work on individual components without affecting unrelated parts of the codebase.
-
----
-
-## Project Philosophy
-
-The toolkit is built around four core principles:
-
-### Modularity
-
-Each component should perform one well-defined task and remain reusable across projects.
-
-### Reproducibility
-
-Every analysis should produce reproducible and verifiable results suitable for research.
-
-### Extensibility
-
-Researchers should be able to add new noise models, visualization tools, and metrics without modifying existing modules.
-
-### Community
-
-The project is designed to welcome contributions from students, researchers, and developers interested in quantum computing.
-
----
-
-> **Quantum Noise Toolkit is not an error mitigation library.**
->
-> Its purpose is to understand, characterize, simulate, and visualize quantum noise. Future repositories within the ecosystem will build upon these capabilities to implement error mitigation, error suppression, benchmarking, and compiler optimization techniques.
-
----
-
-# Installation
-
-## Requirements
-
-Quantum Noise Toolkit is designed for modern Python environments and leverages the Qiskit ecosystem for quantum hardware access and simulation.
-
-### Minimum Requirements
-
-- Python **3.11+**
-- pip **23+**
-- Git
-
----
-
-## Supported Platforms
-
-The toolkit is intended to work across multiple operating systems.
-
-| Platform | Supported |
-|-----------|-----------|
-| Windows | ✅ |
-| Linux | ✅ |
-| macOS | ✅ |
-
----
-
-## Install from Source
-
-Clone the repository
+Today's quantum processors are noisy: every gate, measurement and idle nanosecond adds error,
+and the error varies from qubit to qubit and from day to day. **Quantum Noise Toolkit** turns a
+device's calibration data into answers to practical questions:
+
+- *Which qubits and couplers are healthy right now, and which are broken?*
+- *How likely is my circuit to succeed on this device, before I spend QPU time?*
+- *Which device should I run it on?*
+- *When hardware disagrees with the prediction, which qubit is responsible?*
+
+It works with any Qiskit backend: live IBM Quantum devices, offline snapshots of them, or the
+Aer simulator.
+
+## Validated on real hardware
+
+The toolkit's circuit-reliability estimate was tested against **IBM's 156-qubit `ibm_fez`**.
+
+<img src="docs/images/hardware_validation.png" alt="Estimate vs hardware" width="640">
+
+| Circuit | Toolkit estimate | Real hardware | Difference |
+|---|---|---|---|
+| Bell (2 qubits) | 0.987 | 0.983 | 0.4 pts |
+| GHZ-3 | 0.978 | 0.976 | 0.2 pts |
+| GHZ-5 | 0.958 | 0.929 | 2.9 pts |
+
+For Bell and GHZ-3 the prediction is within 0.4 points, close to the shot-noise level of about
+±0.2 points at 4000 shots. For GHZ-5 the toolkit's per-qubit
+diagnosis traced most of the gap to **one qubit (Q140) that failed 3× more often than its
+calibration predicted**, the signature of T1 drift. Idle decoherence accounted for only 0.3
+points. Full analysis: [docs/hardware_validation.md](docs/hardware_validation.md).
+
+## Features
+
+| Module | What it does |
+|---|---|
+| **`characterization`** | T1, T2, frequencies, gate and readout errors and durations, per-qubit tables, backend summaries and comparison. Detects disabled qubits and couplers and keeps them out of averages |
+| **`analysis`** | Circuit success probability before execution, with an error budget and optional idle-decoherence model; qubit ranking; robust (MAD) outlier detection; backend ranking and circuit–backend suitability |
+| **`noise_models`** | Depolarizing, bit/phase flip, amplitude/phase damping, thermal relaxation, reset, readout and custom Kraus channels; channel composition; Aer noise models from channels or from device calibration |
+| **`metrics`** | State, process and average gate fidelity, purity, trace distance, Hellinger fidelity, total variation distance |
+| **`visualization`** | Device maps of T1, T2, readout and 2Q errors (Graphviz-free layout); dashboards, histograms, rankings; interactive Plotly maps |
+| **`reports`** | Backend, circuit and noise reports in Markdown, HTML, JSON and CSV |
+| **`cli`** | `qntoolkit summary / hotspots / analyze / report / dashboard` from the terminal |
+
+## Installation
 
 ```bash
 git clone https://github.com/shishir-kuet/quantum-noise-toolkit.git
-```
-
-Navigate into the project directory
-
-```bash
 cd quantum-noise-toolkit
-```
-
-Create a virtual environment
-
-Linux/macOS
-
-```bash
 python -m venv .venv
-source .venv/bin/activate
+source .venv/bin/activate        # Windows: .venv\Scripts\activate
+pip install -e ".[dev]"
 ```
 
-Windows
+Requires Python 3.11+. Everything works offline with Qiskit's fake backends. To use live IBM
+Quantum devices, save your credentials once with `QiskitRuntimeService.save_account(...)` (see
+[docs/installation.md](docs/installation.md)).
 
-```bash
-python -m venv .venv
-
-.venv\Scripts\activate
-```
-
-Install dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-Install the toolkit in editable mode
-
-```bash
-pip install -e .
-```
-
-Run the tests
-
-```bash
-pytest -m "not ibm"   # offline tests (fake backends)
-pytest                # also runs live IBM Quantum tests when credentials are saved
-```
-
----
-
-## Future Installation
-
-Once released on PyPI, installation will be as simple as
-
-```bash
-pip install quantum-noise-toolkit
-```
-
----
-
-# Quick Start
-
-## Loading a Backend
+## Quick start
 
 ```python
+from qiskit import QuantumCircuit
 from qntoolkit import load_backend
-
-backend = load_backend("ibm_fez")      # real IBM Quantum device (saved credentials)
-backend = load_backend("fake_fez")     # offline snapshot of the same device
-backend = load_backend("aer_simulator")
-```
-
-Every function in the toolkit accepts any of these backends.
-
----
-
-## Backend Summary
-
-```python
+from qntoolkit.analysis import analyse_circuit, error_hotspots
 from qntoolkit.characterization import backend_summary
+from qntoolkit.visualization import plot_cx_error_map
 
-summary = backend_summary(backend)
+backend = load_backend("fake_fez")      # or "ibm_fez" for live calibration data
 
-print(summary)
+print(backend_summary(backend))
+print(error_hotspots(backend).head())
+plot_cx_error_map(backend, filename="cz_errors.png")
+
+qc = QuantumCircuit(3, name="ghz")
+qc.h(0)
+qc.cx(0, 1)
+qc.cx(1, 2)
+qc.measure_all()
+
+print(analyse_circuit(qc, backend, include_idle=True))
 ```
-
-Expected output
 
 ```
 Backend               : fake_fez
@@ -392,174 +108,36 @@ Average T2            : 90.5 us
 Average 1Q Error      : 2.87e-04
 Average 2Q Error      : 5.56e-03
 Average Readout Error : 1.32e-02
-```
-
----
-
-## Analyze a Circuit
-
-```python
-from qiskit import QuantumCircuit
-from qntoolkit.analysis import analyse_circuit
-
-qc = QuantumCircuit(3, name="ghz")
-qc.h(0)
-qc.cx(0, 1)
-qc.cx(1, 2)
-qc.measure_all()
-
-report = analyse_circuit(
-    circuit=qc,
-    backend=backend
-)
-
-print(report)
-```
-
-Expected output
-
-```
+...
 Circuit              : ghz
-Backend              : fake_fez
 Physical Qubits      : [0, 1, 2]
-Depth                : 12
-Two-Qubit Depth      : 2
-Gate Counts          : {'rz': 10, 'sx': 5, 'measure': 3, 'cz': 2, 'barrier': 1}
 Two-Qubit Gate Count : 2
-Estimated Duration   : 1800 ns
-Estimated Fidelity   : 0.9846
-Estimated Error      : 0.0154
-Success Probability  : 0.9572
-Circuit Reliability  : 95.7/100 (excellent)
+Estimated Fidelity   : 0.9831
+Success Probability  : 0.9558
+Circuit Reliability  : 95.6/100 (excellent)
 ```
 
----
-
-## Generate a Visualization
-
-```python
-from qntoolkit.visualization import plot_t1_heatmap, plot_calibration_dashboard
-
-plot_t1_heatmap(backend)
-plot_calibration_dashboard(backend, filename="dashboard.png")
-```
-
----
-
-## Generate Backend Report
-
-```python
-from qntoolkit.reports import generate_backend_report
-
-generate_backend_report(
-    backend,
-    output="backend_report.md"      # or .html, .json, .csv
-)
-```
-
----
-
-## Run the Examples
+### Command line
 
 ```bash
-python examples/bell_state.py
-python examples/ghz_state.py
-python examples/backend_analysis.py            # offline (fake_fez)
-python examples/backend_analysis.py ibm_fez    # live IBM Quantum data
+qntoolkit summary ibm_fez                    # calibration summary, best/worst qubits
+qntoolkit hotspots ibm_fez                   # broken or drifting qubits and couplers
+qntoolkit analyze circuit.qasm ibm_fez --idle
+qntoolkit report ibm_fez -o fez_report.html
+qntoolkit dashboard ibm_fez -o dashboard.png
 ```
 
----
-
-# Project Structure
-
-```
-quantum-noise-toolkit/
-│
-├── docs/
-│   ├── installation.md
-│   ├── architecture.md
-│   ├── api.md
-│   ├── tutorials.md
-│   └── theory.md
-│
-├── examples/
-│   ├── bell_state.py
-│   ├── ghz_state.py
-│   ├── backend_analysis.py
-│   └── backend_*.py / target_api.py   (IBM backend exploration)
-│
-├── src/qntoolkit/
-│   ├── utils/              backend loading, exceptions
-│   ├── backend/            IBM backend information by name
-│   ├── characterization/   calibration extraction
-│   ├── noise_models/       noise channels, Aer noise models
-│   ├── metrics/            fidelities and distances
-│   ├── analysis/           circuit and backend analysis
-│   ├── visualization/      figures and interactive maps
-│   └── reports/            Markdown / HTML / JSON / CSV reports
-│
-├── tests/
-├── README.md
-├── CONTRIBUTING.md
-├── ROADMAP.md
-├── CHANGELOG.md
-├── LICENSE
-└── pyproject.toml
-```
-
----
-
-# API Overview
-
-Quantum Noise Toolkit is organized into several independent modules. The complete reference
-is in [docs/api.md](docs/api.md).
-
----
-
-## Characterization
-
-Responsible for extracting information from quantum hardware.
-
-Example
+### Noise channels and simulation
 
 ```python
-from qntoolkit.characterization import *
+from qntoolkit.metrics import gate_fidelity
+from qntoolkit.noise_models import (
+    AmplitudeDamping, DepolarizingNoise, NoiseModelBuilder, PhaseDamping, ReadoutNoise,
+    noisy_simulator,
+)
 
-backend_summary(backend)
-
-qubit_properties(backend)        # DataFrame: T1, T2, readout, 1Q and 2Q errors per qubit
-
-gate_errors(backend, "cz")
-
-readout_errors(backend)
-```
-
-Capabilities
-
-- Backend calibration
-- T1 / T2 extraction
-- Readout error
-- Gate error and duration
-- Calibration summaries and backend comparison
-
----
-
-## Noise Models
-
-Provides reusable quantum noise models.
-
-Example
-
-```python
-from qntoolkit.noise_models import *
-
-DepolarizingNoise(0.01)
-
-AmplitudeDamping(0.05).compose(PhaseDamping(0.02))
-
-ThermalRelaxation(t1=100, t2=80, gate_time=0.05)
-
-CustomNoise(kraus_operators)
+decay = AmplitudeDamping(0.05).compose(PhaseDamping(0.02))
+print(gate_fidelity(decay))
 
 model = (
     NoiseModelBuilder()
@@ -567,463 +145,108 @@ model = (
     .add_readout(ReadoutNoise(0.02, 0.03))
     .build()
 )
-
-simulator = noisy_simulator(backend)     # Aer simulator mimicking the device
+simulator = noisy_simulator(model)           # or noisy_simulator(backend) to mimic a device
 ```
 
-Capabilities
+## Examples and notebook
 
-- Standard noise channels: depolarizing, bit flip, phase flip, amplitude damping, phase damping,
-  thermal relaxation, reset, readout
-- Custom channels from Kraus operators
-- Aer integration
-- Noise composition
+| | |
+|---|---|
+| [notebooks/quickstart.ipynb](notebooks/quickstart.ipynb) | Executed end-to-end walkthrough with figures |
+| [examples/hardware_validation.py](examples/hardware_validation.py) | Runs Bell/GHZ on IBM hardware, compares with predictions, diagnoses each qubit |
+| [examples/backend_analysis.py](examples/backend_analysis.py) | Calibration → analysis → figures → reports for any backend |
+| [examples/ghz_state.py](examples/ghz_state.py) | How noise accumulates as GHZ states grow |
+| [examples/bell_state.py](examples/bell_state.py) | Ideal vs noisy Bell state, depolarizing sweep |
 
----
+<details>
+<summary><b>Calibration dashboard</b> (click to expand)</summary>
 
-## Analysis
+<img src="docs/images/fez_dashboard.png" alt="Calibration dashboard" width="900">
 
-Estimate circuit quality before execution.
+</details>
 
-Example
-
-```python
-from qntoolkit.analysis import *
-
-analyse_circuit(qc, backend)
-
-estimate_fidelity(qc, backend)
-
-estimate_success_probability(qc, backend)
-
-backend_score(backend)
-
-best_qubits(backend, 5)
-
-error_hotspots(backend)
-
-backend_suitability(qc, [backend_a, backend_b])
-```
-
-Capabilities
-
-- Circuit statistics
-- Estimated fidelity and error budget
-- Reliability score
-- Qubit ranking and error hotspot detection
-- Backend ranking and suitability
-
----
-
-## Metrics
-
-Provides commonly used metrics in quantum computing.
-
-Example
-
-```python
-from qntoolkit.metrics import *
-
-state_fidelity(state_a, state_b)
-
-process_fidelity(channel)
-
-gate_fidelity(channel)
-
-purity(state)
-
-trace_distance(state_a, state_b)
-
-hellinger_fidelity(counts_a, counts_b)
-```
-
----
-
-## Visualization
-
-Publication-quality visualizations.
-
-Example
-
-```python
-from qntoolkit.visualization import *
-
-plot_t1_heatmap(backend)
-
-plot_t2_heatmap(backend)
-
-plot_backend_topology(backend)
-
-plot_cx_error_map(backend)
-
-plot_error_histogram(backend)
-
-plot_gate_errors(backend)
-
-plot_calibration_dashboard(backend)
-
-plot_interactive_topology(backend)       # Plotly, with hover tooltips
-```
-
----
-
-## Reports
-
-Generate structured reports.
-
-Example
-
-```python
-from qntoolkit.reports import *
-
-generate_backend_report(backend, output="report.html")
-
-generate_circuit_report(qc, backend, output="circuit.md")
-
-generate_noise_summary(noise_model)
-```
-
-Output formats
-
-- Markdown
-
-- HTML
-
-- CSV
-
-- JSON
-
----
-
-# Example Workflows
-
-## Example 1
-
-Analyze an IBM Quantum backend
+## Architecture
 
 ```
-Connect Backend
-
-↓
-
-Extract Calibration
-
-↓
-
-Analyze Metrics
-
-↓
-
-Visualize Results
-
-↓
-
-Generate Report
+            reports · cli
+                 │
+   visualization · analysis · metrics
+                 │
+   characterization · noise_models
+                 │
+               utils
+                 │
+   Qiskit · Qiskit Aer · Qiskit IBM Runtime
 ```
 
----
-
-## Example 2
-
-Estimate Circuit Reliability
-
-```
-Quantum Circuit
-
-↓
-
-Backend Selection
-
-↓
-
-Circuit Analysis
-
-↓
-
-Noise Estimation
-
-↓
-
-Reliability Score
-```
-
----
-
-## Example 3
-
-Backend Comparison
+Every module reads hardware data from the backend's `Target`, so the same code runs on IBM
+devices, fake backends and simulators. Units are explicit in every column name (`t1_us`,
+`duration_ns`), and tables are pandas DataFrames. Design notes:
+[docs/architecture.md](docs/architecture.md).
 
 ```
-Backend A
-
-↓
-
-Backend B
-
-↓
-
-Backend C
-
-↓
-
-Metric Comparison
-
-↓
-
-Visualization
-
-↓
-
-Ranking
+src/qntoolkit/
+├── utils/              backend loading, exceptions
+├── backend/            IBM backend information by name
+├── characterization/   calibration extraction
+├── noise_models/       noise channels, Aer noise models
+├── metrics/            fidelities and distances
+├── analysis/           circuit and backend analysis
+├── visualization/      figures and interactive maps
+├── reports/            Markdown / HTML / JSON / CSV reports
+└── cli.py              command-line interface
 ```
 
----
+## Quality
 
-# Documentation
+- **102 tests**: 85 run offline on fake backends and 17 run end-to-end against live IBM hardware
+  (`pytest -m ibm`, skipped automatically without credentials)
+- **93% line coverage** on the offline suite
+- **CI** on every push and pull request: ruff, black and tests on Python 3.11, 3.12 and 3.13
+- Physics checks in the tests, for example: amplitude damping sends \|1⟩ to \|0⟩; Kraus operators
+  are trace-preserving; the closed-form idle error equals the thermal-relaxation channel's gate
+  error; estimates equal the hand-computed product of calibrated errors
 
-Comprehensive documentation is available in the **docs/** directory.
-
-| Document | Description |
-|-----------|-------------|
-| installation.md | Installation instructions |
-| architecture.md | System architecture |
-| api.md | Complete API reference |
-| tutorials.md | Step-by-step tutorials |
-| theory.md | Background on quantum noise and NISQ devices |
-
----
-
-## Tutorials
-
-The repository includes practical examples covering
-
-- Bell States (`examples/bell_state.py`)
-- GHZ States (`examples/ghz_state.py`)
-- Backend Characterization, Calibration Analysis and Noise Visualization (`examples/backend_analysis.py`)
-- Step-by-step tutorials in [docs/tutorials.md](docs/tutorials.md)
-
-Planned: QAOA, VQE, MaxCut, Quantum Fourier Transform, Grover's Algorithm and Jupyter notebooks.
-
-These examples are intended for students, educators, and researchers who want hands-on experience with quantum noise analysis.
-
----
-
-# Development Roadmap
-
-The project follows an incremental development strategy, where each milestone introduces new capabilities while maintaining a stable and modular architecture. See [ROADMAP.md](ROADMAP.md) for details.
-
-| Version | Milestone | Status |
-|---|---|---|
-| 0.1 | Foundation: architecture, backend loader, backend information | ✅ Done |
-| 0.2 | Noise characterization: T1, T2, readout and gate errors, backend comparison | ✅ Implemented |
-| 0.3 | Noise models: depolarizing, amplitude/phase damping, thermal relaxation, readout, custom | ✅ Implemented |
-| 0.4 | Circuit analysis: statistics, fidelity estimation, reliability scoring, backend suitability | ✅ Implemented |
-| 0.5 | Visualization: topology, heatmaps, dashboards, histograms, interactive maps | ✅ Implemented |
-| 0.6 | Reporting: backend, circuit and noise reports; HTML, JSON, CSV, Markdown export | ✅ Implemented |
-| 1.0 | Stable release: CI, PyPI package, notebooks, more tutorials | 🚧 Planned |
-
----
-
-# Future Scope
-
-Potential future research directions include:
-
-- Crosstalk analysis
-- Pulse-level visualization
-- Calibration history tracking
-- Machine learning-based noise prediction
-- Noise-aware qubit recommendation
-- Hardware benchmarking
-- Multi-provider backend support
-- Cloud integration
-- Plugin architecture
-
----
-
-# Contributing
-
-Contributions are welcome from researchers, students, educators, and developers.
-
-Whether you are fixing bugs, improving documentation, implementing new noise models, or adding visualization tools, every contribution is appreciated.
-
-Please read the **CONTRIBUTING.md** guide before opening a pull request.
-
----
-
-## Development Workflow
-
-This project follows a Git Flow-inspired branching strategy.
-
+```bash
+pytest -m "not ibm"       # offline
+pytest                    # including live IBM Quantum tests
 ```
 
-main
-│
-└── develop
-│
-├── feature/project-setup
-├── feature/backend-loader
-├── feature/noise-models
-├── feature/analysis
-├── feature/visualization
-└── feature/reporting
+## Documentation
 
-```
+| | |
+|---|---|
+| [Installation](docs/installation.md) | Setup, IBM Quantum credentials, troubleshooting |
+| [Tutorials](docs/tutorials.md) | Characterize, rank, estimate, simulate, visualize, report |
+| [API reference](docs/api.md) | Every public function and class |
+| [Theory](docs/theory.md) | T1/T2, noise channels, fidelity measures, the estimation model |
+| [Hardware validation](docs/hardware_validation.md) | Predictions vs `ibm_fez` |
+| [Architecture](docs/architecture.md) | Module layers and design decisions |
 
-### Branch Descriptions
+## Roadmap
 
-| Branch | Purpose |
-|---------|---------|
-| `main` | Stable production-ready code |
-| `develop` | Active development branch |
-| `feature/*` | Individual feature implementation |
-| `hotfix/*` | Critical bug fixes |
-| `release/*` | Release preparation |
+All planned features for v0.2–v0.6 (characterization, noise models, circuit analysis,
+visualization, reporting) are implemented. Next are a PyPI release, more notebooks and
+algorithm examples (QAOA, VQE), validation on more devices, and calibration-drift tracking.
+See [ROADMAP.md](ROADMAP.md).
 
----
+> Quantum Noise Toolkit focuses on **understanding** noise, not correcting it. Its
+> characterization and diagnostics are building blocks for error mitigation, error suppression
+> and noise-aware compilation.
 
-## Contribution Process
+## Contributing
 
-1. Fork the repository.
-2. Create a feature branch from `develop`.
-3. Implement your changes.
-4. Add or update tests where appropriate.
-5. Ensure code formatting and linting pass.
-6. Commit using clear and descriptive commit messages.
-7. Push your branch to your fork.
-8. Open a Pull Request against `develop`.
+Contributions are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, code style and the
+branch workflow (feature branches → `develop` → `main`), and [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
 
----
+## Citation
 
-## Commit Message Convention
+If you use this toolkit in research, please cite it via [CITATION.cff](CITATION.cff). GitHub
+shows a *Cite this repository* button in the sidebar.
 
-Examples:
+## License
 
-```
+MIT. See [LICENSE](LICENSE).
 
-feat: add backend loader
-
-feat: implement depolarizing noise model
-
-fix: correct readout error calculation
-
-docs: improve installation guide
-
-refactor: simplify visualization module
-
-test: add backend analysis tests
-
-```
-
----
-
-## Code Style
-
-The project follows modern Python development practices.
-
-- Black for formatting
-- Ruff for linting
-- pytest for testing
-- Type hints where appropriate
-- Comprehensive documentation
-- Meaningful commit history
-
----
-
-# Citation
-
-If you use Quantum Noise Toolkit in your research, please cite the project.
-
-A `CITATION.cff` file will be added in a future release to simplify citation through GitHub.
-
-BibTeX support will also be provided.
-
----
-
-# Related Projects
-
-Quantum Noise Toolkit is the foundation of a larger ecosystem of open-source quantum software.
-
-```
-
-Quantum Toolkit Ecosystem
-
-│
-
-├── Quantum Noise Toolkit
-
-│
-
-├── Quantum Error Mitigation
-
-│
-
-├── Quantum Error Suppression
-
-│
-
-├── Quantum Compiler Optimization
-
-│
-
-├── Quantum Backend Analyzer
-
-│
-
-├── Quantum Benchmark Suite
-
-│
-
-└── Quantum Visualization Dashboard
-
-```
-
-Each repository focuses on a specific aspect of quantum computing while remaining interoperable with the others.
-
----
-
-# License
-
-This project is licensed under the MIT License.
-
-See the [LICENSE](LICENSE) file for additional information.
-
----
-
-# Acknowledgements
-
-Quantum Noise Toolkit is built upon the contributions of the open-source quantum computing community.
-
-Special thanks to the developers and maintainers of:
-
-- Qiskit
-- Qiskit Aer
-- IBM Quantum
-- NumPy
-- SciPy
-- Pandas
-- Matplotlib
-- Plotly
-
-We also thank researchers, educators, and contributors who continue to advance the field of quantum computing through open science and collaborative software development.
-
----
-
-# Project Vision
-
-Quantum Noise Toolkit aims to become a comprehensive, modular, and community-driven toolkit for understanding quantum noise in NISQ devices.
-
-By providing robust tools for characterization, simulation, analysis, and visualization, the project seeks to support research, education, and the development of more reliable quantum algorithms.
-
-We welcome contributions from the global quantum computing community and invite researchers, students, and developers to help shape the future of this project.
-
----
-
-<div align="center">
-
-### ⭐ If you find this project useful, please consider giving it a star!
-
-**Happy Quantum Computing!**
-
-Made with ❤️ by the Quantum Computing Community
-
-</div>
+Built on [Qiskit](https://github.com/Qiskit/qiskit), [Qiskit Aer](https://github.com/Qiskit/qiskit-aer),
+[Qiskit IBM Runtime](https://github.com/Qiskit/qiskit-ibm-runtime), NumPy, pandas, Matplotlib and Plotly.

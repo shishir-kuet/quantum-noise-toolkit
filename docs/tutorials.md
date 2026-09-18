@@ -3,6 +3,20 @@
 All tutorials run offline with fake backends. Replace `"fake_fez"` with a real device name such
 as `"ibm_fez"` to use live calibration data.
 
+For an executed walkthrough with figures, open
+[notebooks/quickstart.ipynb](../notebooks/quickstart.ipynb).
+
+---
+
+## 0. From the command line
+
+```bash
+qntoolkit summary fake_fez
+qntoolkit hotspots ibm_fez
+qntoolkit analyze my_circuit.qasm ibm_fez --idle
+qntoolkit report ibm_fez -o fez_report.html
+```
+
 ---
 
 ## 1. Characterize a backend
@@ -59,8 +73,10 @@ print(report.error_budget)
 ```
 
 The estimate multiplies (1 − error) over every gate and measurement on the physical qubits
-chosen by the transpiler. `examples/ghz_state.py` shows that it tracks noisy simulations to
-within about 1% for GHZ states.
+chosen by the transpiler. Add `include_idle=True` to also account for qubits decohering while
+they wait. `examples/ghz_state.py` shows that the estimate tracks noisy simulations to within
+about 1% for GHZ states, and [hardware_validation.md](hardware_validation.md) compares it with
+real hardware.
 
 Pick the best device for a circuit:
 
@@ -163,5 +179,6 @@ generate_circuit_report(qc, backend, output="ghz_report.json")
 | `examples/bell_state.py` | Ideal vs noisy Bell state, estimate vs simulation, depolarizing sweep |
 | `examples/ghz_state.py` | Noise accumulation in GHZ states of growing size |
 | `examples/backend_analysis.py` | Full workflow: calibration → analysis → figures → reports |
+| `examples/hardware_validation.py` | Runs Bell/GHZ on real IBM hardware and diagnoses deviations per qubit |
 
 Each script takes an optional backend name, e.g. `python examples/backend_analysis.py ibm_fez`.

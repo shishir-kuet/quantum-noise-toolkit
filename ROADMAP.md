@@ -10,25 +10,27 @@ Each milestone adds one layer of capability on top of a stable, modular core.
 | 0.4 | Circuit analysis: statistics, fidelity estimation, reliability scoring, backend suitability | ✅ Implemented |
 | 0.5 | Visualization: topology maps, heatmaps, dashboards, histograms, interactive maps | ✅ Implemented |
 | 0.6 | Reporting: backend, circuit and noise reports in Markdown, HTML, JSON and CSV | ✅ Implemented |
-| 1.0 | Stable release | 🚧 Planned |
+| 1.0 | Stable release | 🚧 In progress |
 
 ## Toward 1.0
 
-- Continuous integration (GitHub Actions running the offline test suite, ruff and black)
-- PyPI package
-- Jupyter notebooks (`notebooks/`): noise characterization, backend comparison, readout error,
-  visualization
-- More algorithm examples: QAOA, VQE, MaxCut, QFT, Grover
-- `CITATION.cff` and BibTeX entry
-- API stability review and deprecation policy
+- [x] Continuous integration (ruff, black, tests with coverage on Python 3.11–3.13)
+- [x] Command-line interface
+- [x] Validation against real hardware (`docs/hardware_validation.md`)
+- [x] Quickstart notebook
+- [x] `CITATION.cff`
+- [ ] PyPI package
+- [ ] More notebooks: backend comparison, readout error, noise channels
+- [ ] Algorithm examples: QAOA, VQE, MaxCut, QFT, Grover
+- [ ] Validation on more devices and deeper circuits
+- [ ] API stability review and deprecation policy
 
 ## Future scope
 
-- Idle-time decoherence in circuit fidelity estimates
+- Drift detection: compare calibration snapshots over time and flag qubits that change
 - Crosstalk analysis
-- Calibration history tracking and drift analysis
 - Readout error mitigation helpers built on the characterization data
-- Machine-learning-based noise prediction
 - Noise-aware qubit recommendation and layout selection
+- Machine-learning-based noise prediction
 - Multi-provider backend support
 - PDF reports
